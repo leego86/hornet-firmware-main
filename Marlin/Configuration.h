@@ -1603,32 +1603,32 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }    |将停放位置指定为 { X, Y, Z_raise } 
   #define NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
-  //#define NOZZLE_PARK_X_ONLY          // X move only is required to park    |
-  //#define NOZZLE_PARK_Y_ONLY          // Y move only is required to park    |
-  #define NOZZLE_PARK_Z_RAISE_MIN   2   // (mm) Always raise Z by at least this distance    |
-  #define NOZZLE_PARK_XY_FEEDRATE 100   // (mm/s) X and Y axes feedrate (also used for delta Z axis)    |
-  #define NOZZLE_PARK_Z_FEEDRATE    5   // (mm/s) Z axis feedrate (not used for delta printers)    |
+  //#define NOZZLE_PARK_X_ONLY          // X move only is required to park    |仅需要 X 移动即可停车
+  //#define NOZZLE_PARK_Y_ONLY          // Y move only is required to park    |仅需要 Y 移动即可停车
+  #define NOZZLE_PARK_Z_RAISE_MIN   2   // (mm) Always raise Z by at least this distance    |(mm) 始终将 Z 升高至少此距离
+  #define NOZZLE_PARK_XY_FEEDRATE 100   // (mm/s) X and Y axes feedrate (also used for delta Z axis)    |(mm/s) X 轴和 Y 轴进给率（也用于 Delta Z 轴） 
+  #define NOZZLE_PARK_Z_FEEDRATE    5   // (mm/s) Z axis feedrate (not used for delta printers)    |(mm/s) Z 轴进给率（不用于 Delta 打印机）
 #endif
 
 /**
- * Clean Nozzle Feature -- EXPERIMENTAL    |
+ * Clean Nozzle Feature -- EXPERIMENTAL    |清洁喷嘴功能——实验
  *
- * Adds the G12 command to perform a nozzle cleaning process.    |
+ * Adds the G12 command to perform a nozzle cleaning process.    |添加G12指令来执行喷嘴清洁过程。
  *
  * Parameters:
- *   P  Pattern    |
- *   S  Strokes / Repetitions    |
- *   T  Triangles (P1 only)    |
+ *   P  Pattern    |P 图案
+ *   S  Strokes / Repetitions    |S 笔画/重复
+ *   T  Triangles (P1 only)    |T 形三角形（仅限 P1）
  *
- * Patterns:
- *   P0  Straight line (default). This process requires a sponge type material    |
- *       at a fixed bed location. "S" specifies strokes (i.e. back-forth motions)    |
- *       between the start / end points.    |
+ * Patterns:  |图案
+ *   P0  Straight line (default). This process requires a sponge type material    |P0 直线（默认）。这个过程需要海绵类材料 
+ *       at a fixed bed location. "S" specifies strokes (i.e. back-forth motions)    |在固定床位。 “S”指定笔画（即前后运动）
+ *       between the start / end points.    |起点/终点之间。
  *
- *   P1  Zig-zag pattern between (X0, Y0) and (X1, Y1), "T" specifies the    |
- *       number of zig-zag triangles to do. "S" defines the number of strokes.    |
- *       Zig-zags are done in whichever is the narrower dimension.    |
- *       For example, "G12 P1 S1 T3" will execute:    |
+ *   P1  Zig-zag pattern between (X0, Y0) and (X1, Y1), "T" specifies the    |P1 (X0, Y0) 和 (X1, Y1) 之间的锯齿形图案，“T”指定
+ *       number of zig-zag triangles to do. "S" defines the number of strokes.    |要做的之字形三角形的数量。 “S”定义了笔划数。
+ *       Zig-zags are done in whichever is the narrower dimension.    |之字形以较窄的尺寸进行。
+ *       For example, "G12 P1 S1 T3" will execute:    |例如，“G12 P1 S1 T3”将执行：
  *
  *          --
  *         |  (X0, Y1) |     /\        /\        /\     | (X1, Y1)
@@ -1640,108 +1640,108 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
  *                       |________|_________|_________|
  *                           T1        T2        T3
  *
- *   P2  Circular pattern with middle at NOZZLE_CLEAN_CIRCLE_MIDDLE.    |
- *       "R" specifies the radius. "S" specifies the stroke count.    |
- *       Before starting, the nozzle moves to NOZZLE_CLEAN_START_POINT.    |
+ *   P2  Circular pattern with middle at NOZZLE_CLEAN_CIRCLE_MIDDLE.    |P2 圆形图案，中间位于 NOZZLE_CLEAN_CIRCLE_MIDDLE。
+ *       "R" specifies the radius. "S" specifies the stroke count.    |“R”指定半径。 “S”指定笔划数。
+ *       Before starting, the nozzle moves to NOZZLE_CLEAN_START_POINT.    |启动前，喷嘴移动至 NOZZLE_CLEAN_START_POINT。
  *
- *   Caveats: The ending Z should be the same as starting Z.    |
- * Attention: EXPERIMENTAL. G-code arguments may change.    |
+ *   Caveats: The ending Z should be the same as starting Z.    |注意事项：结尾 Z 应该与起始 Z 相同。
+ * Attention: EXPERIMENTAL. G-code arguments may change.    |注意：实验性的。 G 代码参数可能会改变。
  */
 //#define NOZZLE_CLEAN_FEATURE
 
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
-  // Default number of pattern repetitions    |
+  // Default number of pattern repetitions    |默认模式重复次数
   #define NOZZLE_CLEAN_STROKES  12
 
-  // Default number of triangles    |
+  // Default number of triangles    |默认三角形数量
   #define NOZZLE_CLEAN_TRIANGLES  3
 
-  // Specify positions for each tool as { { X, Y, Z }, { X, Y, Z } }    |
-  // Dual hotend system may use { {  -20, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) },  {  420, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) }}    |
+  // Specify positions for each tool as { { X, Y, Z }, { X, Y, Z } }    |将每个工具的位置指定为 { { X, Y, Z }, { X, Y, Z } }
+  // Dual hotend system may use { {  -20, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) },  {  420, (Y_BED_SIZE / 2), (Z_MIN_POS + 1) }}    | 双热端系统可以使用 { { -20, (Y_BED_SIZE /2), (Z_MIN_POS + 1) }, { 420, (Y_BED_SIZE /2), (Z_MIN_POS + 1) }} 
   #define NOZZLE_CLEAN_START_POINT { {  30, 30, (Z_MIN_POS + 1) } }
   #define NOZZLE_CLEAN_END_POINT   { { 100, 60, (Z_MIN_POS + 1) } }
 
-  // Circular pattern radius    |
+  // Circular pattern radius    | 圆形图案半径
   #define NOZZLE_CLEAN_CIRCLE_RADIUS 6.5
-  // Circular pattern circle fragments number    |
+  // Circular pattern circle fragments number    |圆形图案圆形碎片数
   #define NOZZLE_CLEAN_CIRCLE_FN 10
-  // Middle point of circle    |
+  // Middle point of circle    |圆的中点
   #define NOZZLE_CLEAN_CIRCLE_MIDDLE NOZZLE_CLEAN_START_POINT
 
-  // Move the nozzle to the initial position after cleaning    |
+  // Move the nozzle to the initial position after cleaning    |清洗后将喷嘴移至初始位置
   #define NOZZLE_CLEAN_GOBACK
 
-  // For a purge/clean station that's always at the gantry height (thus no Z move)    |
+  // For a purge/clean station that's always at the gantry height (thus no Z move)    |对于始终处于龙门高度的吹扫/清洁站（因此没有 Z 轴移动）
   //#define NOZZLE_CLEAN_NO_Z
 
-  // For a purge/clean station mounted on the X axis    |
+  // For a purge/clean station mounted on the X axis    |对于安装在 X 轴上的吹扫/清洁站
   //#define NOZZLE_CLEAN_NO_Y
 
-  // Explicit wipe G-code script applies to a G12 with no arguments.    |
+  // Explicit wipe G-code script applies to a G12 with no arguments.    |显式擦除 G 代码脚本适用于不带参数的 G12。
   //#define WIPE_SEQUENCE_COMMANDS "G1 X-17 Y25 Z10 F4000\nG1 Z1\nM114\nG1 X-17 Y25\nG1 X-17 Y95\nG1 X-17 Y25\nG1 X-17 Y95\nG1 X-17 Y25\nG1 X-17 Y95\nG1 X-17 Y25\nG1 X-17 Y95\nG1 X-17 Y25\nG1 X-17 Y95\nG1 X-17 Y25\nG1 X-17 Y95\nG1 Z15\nM400\nG0 X-10.0 Y-9.0"    |
 
 #endif
 
 /**
- * Print Job Timer    |
+ * Print Job Timer    |打印作业定时器
  *
- * Automatically start and stop the print job timer on M104/M109/M190.    |
+ * Automatically start and stop the print job timer on M104/M109/M190.    |自动启动和停止M104/M109/M190 上的打印作业定时器。
  *
- *   M104 (hotend, no wait) - high temp = none,        low temp = stop timer    |
- *   M109 (hotend, wait)    - high temp = start timer, low temp = stop timer    |
- *   M190 (bed, wait)       - high temp = start timer, low temp = none    |
+ *   M104 (hotend, no wait) - high temp = none,        low temp = stop timer    |M104（热端，无等待）-高温=无，低温=停止定时器
+ *   M109 (hotend, wait)    - high temp = start timer, low temp = stop timer    |M109（热端，等待）-高温=启动定时器，低温=停止定时器
+ *   M190 (bed, wait)       - high temp = start timer, low temp = none    |M190（睡觉，等待）-高温=启动计时器，低温=无
  *
- * The timer can also be controlled with the following commands:    |
+ * The timer can also be controlled with the following commands:    |定时器也可以通过以下命令控制：
  *
- *   M75 - Start the print job timer
- *   M76 - Pause the print job timer
- *   M77 - Stop the print job timer
+ *   M75 - Start the print job timer    |M75 -启动打印作业计时器
+ *   M76 - Pause the print job timer    |M76 -暂停打印作业计时器
+ *   M77 - Stop the print job timer    |M77 -停止打印作业计时器
  */
 #define PRINTJOB_TIMER_AUTOSTART
 
 /**
- * Print Counter    |
+ * Print Counter    |打印柜台
  *
- * Track statistical data such as:    |
+ * Track statistical data such as:    |跟踪统计数据，例如：
  *
- *  - Total print jobs    |
- *  - Total successful print jobs    |
- *  - Total failed print jobs    |
- *  - Total time printing    |
+ *  - Total print jobs    |打印作业总数
+ *  - Total successful print jobs    |成功打印作业总数
+ *  - Total failed print jobs    |失败的打印作业总数 
+ *  - Total time printing    |打印总时间
  *
- * View the current statistics with M78.    |
+ * View the current statistics with M78.    |查看M78的当前统计数据。
  */
 //#define PRINTCOUNTER
 
 /**
- * Password    |
+ * Password    |密码 
  *
- * Set a numerical password for the printer which can be requested:    |
+ * Set a numerical password for the printer which can be requested:    |为打印机设置可请求的数字密码：
  *
- *  - When the printer boots up    |
- *  - Upon opening the 'Print from Media' Menu    |
- *  - When SD printing is completed or aborted    |
+ *  - When the printer boots up    |打印机启动时
+ *  - Upon opening the 'Print from Media' Menu    |打开“从媒体打印”菜单时
+ *  - When SD printing is completed or aborted    |当 SD 打印完成或中止时
  *
- * The following G-codes can be used:    |
+ * The following G-codes can be used:    |可以使用以下 G 代码：
  *
- *  M510 - Lock Printer. Blocks all commands except M511.    |
- *  M511 - Unlock Printer.    |
- *  M512 - Set, Change and Remove Password.    |
+ *  M510 - Lock Printer. Blocks all commands except M511.    |M510 -锁定打印机。阻止除 M511 之外的所有命令。
+ *  M511 - Unlock Printer.    |M511 -解锁打印机。 
+ *  M512 - Set, Change and Remove Password.    |M512 -设置、更改和删除密码。
  *
- * If you forget the password and get locked out you'll need to re-flash    |
- * the firmware with the feature disabled, reset EEPROM, and (optionally)    |
- * re-flash the firmware again with this feature enabled.    |
+ * If you forget the password and get locked out you'll need to re-flash    |如果您忘记密码并被锁定，则需要重新刷新
+ * the firmware with the feature disabled, reset EEPROM, and (optionally)    |禁用该功能的固件，重置 EEPROM，以及（可选）
+ * re-flash the firmware again with this feature enabled.    |启用此功能后再次重新刷新固件。 
  */
 //#define PASSWORD_FEATURE
 #if ENABLED(PASSWORD_FEATURE)
-  #define PASSWORD_LENGTH 4                 // (#) Number of digits (1-9). 3 or 4 is recommended    |
+  #define PASSWORD_LENGTH 4                 // (#) Number of digits (1-9). 3 or 4 is recommended    |(#) 位数 (1-9)。推荐3或4
   #define PASSWORD_ON_STARTUP
-  #define PASSWORD_UNLOCK_GCODE             // Unlock with the M511 P<password> command. Disable to prevent brute-force attack.    |
-  #define PASSWORD_CHANGE_GCODE             // Change the password with M512 P<old> S<new>.    |
-  //#define PASSWORD_ON_SD_PRINT_MENU       // This does not prevent gcodes from running    |
+  #define PASSWORD_UNLOCK_GCODE             // Unlock with the M511 P<password> command. Disable to prevent brute-force attack.    |使用 M511 P<密码> 命令解锁。禁用以防止暴力攻击。
+  #define PASSWORD_CHANGE_GCODE             // Change the password with M512 P<old> S<new>.    |使用 M512 P<旧> S<新> 更改密码。
+  //#define PASSWORD_ON_SD_PRINT_MENU       // This does not prevent gcodes from running    |这不会阻止 gcode 运行
   //#define PASSWORD_AFTER_SD_PRINT_END
   //#define PASSWORD_AFTER_SD_PRINT_ABORT
-  //#include "Configuration_Secure.h"       // External file with PASSWORD_DEFAULT_VALUE    |
+  //#include "Configuration_Secure.h"       // External file with PASSWORD_DEFAULT_VALUE    |带有 PASSWORD_DEFAULT_VALUE 的外部文件
 #endif
 
 //=============================================================================
@@ -1755,7 +1755,7 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
  * 液晶屏语言
  * Marlin固件现在的最新版本直接官方支持中文，LCD_LANGUAGE 设置为 cn 即可，前提使需要使用12864液晶屏。注意，新版的不是cn而是zh_Cn大小写请参考注释
  *
- * Select the language to display on the LCD. These languages are available:    |
+ * Select the language to display on the LCD. These languages are available:    |选择 LCD 上显示的语言。这些语言可用
  *
  *   en, an, bg, ca, cz, da, de, el, el_gr, es, eu, fi, fr, gl, hr, hu, it,
  *   jp_kana, ko_KR, nl, pl, pt, pt_br, ro, ru, sk, tr, uk, vi, zh_CN, zh_TW, test
@@ -1765,22 +1765,22 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 #define LCD_LANGUAGE zh_CN
 
 /**
- * LCD Character Set    |
+ * LCD Character Set    |LCD字符集
  *
- * Note: This option is NOT applicable to Graphical Displays.    |
+ * Note: This option is NOT applicable to Graphical Displays.    |注意：此选项不适用于图形显示。
  *
- * All character-based LCDs provide ASCII plus one of these    |
- * language extensions:    |
+ * All character-based LCDs provide ASCII plus one of these    |所有基于字符的 LCD 均提供 ASCII 以及其中之一
+ * language extensions:    |语言扩展:
  *
- *  - JAPANESE ... the most common    |
- *  - WESTERN  ... with more accented characters    |
- *  - CYRILLIC ... for the Russian language    |
+ *  - JAPANESE ... the most common    |日语...最常见
+ *  - WESTERN  ... with more accented characters    |西方...带有更多重音字符
+ *  - CYRILLIC ... for the Russian language    |西里尔字母 ... 俄语
  *
- * To determine the language extension installed on your controller:    |
+ * To determine the language extension installed on your controller:    |要确定控制器上安装的语言扩展：
  *
- *  - Compile and upload with LCD_LANGUAGE set to 'test'    |
- *  - Click the controller to view the LCD menu    |
- *  - The LCD will display Japanese, Western, or Cyrillic text    |
+ *  - Compile and upload with LCD_LANGUAGE set to 'test'    |将 LCD_LANGUAGE 设置为“测试”进行编译和上传
+ *  - Click the controller to view the LCD menu    |单击控制器可查看 LCD 菜单
+ *  - The LCD will display Japanese, Western, or Cyrillic text    |LCD 将显示日语、西方或西里尔文字
  *
  * See https://marlinfw.org/docs/development/lcd_language.html
  *
@@ -1789,7 +1789,7 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 #define DISPLAY_CHARSET_HD44780 JAPANESE
 
 /**
- * Info Screen Style (0:Classic, 1:Průša)    |
+ * Info Screen Style (0:Classic, 1:Průša)    |信息屏幕样式（0：经典，1：Průša）
  *
  * :[0:'Classic', 1:'Průša']
  */
@@ -1798,16 +1798,16 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 /**
  * SD CARD
  *
- * SD Card support is disabled by default. If your controller has an SD slot,    |
- * you must uncomment the following option or it won't work.    |
+ * SD Card support is disabled by default. If your controller has an SD slot,    |默认情况下禁用 SD 卡支持。如果您的控制器有 SD 插槽，
+ * you must uncomment the following option or it won't work.    |您必须取消注释以下选项，否则它将不起作用。 
  */
 #define SDSUPPORT
 
 /**
  * SD CARD: SPI SPEED
  *
- * Enable one of the following items for a slower SPI transfer speed.    |
- * This may be required to resolve "volume init" errors.    |
+ * Enable one of the following items for a slower SPI transfer speed.    |启用以下项目之一可降低 SPI 传输速度。
+ * This may be required to resolve "volume init" errors.    |这可能需要解决“卷初始化”错误。
  */
 //#define SPI_SPEED SPI_HALF_SPEED
 //#define SPI_SPEED SPI_QUARTER_SPEED
@@ -1816,30 +1816,30 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 /**
  * SD CARD: ENABLE CRC
  *
- * Use CRC checks and retries on the SD communication.    |
+ * Use CRC checks and retries on the SD communication.    |对 SD 通信使用 CRC 检查和重试。
  */
 #define SD_CHECK_AND_RETRY
 
 /**
- * LCD Menu Items
+ * LCD Menu Items   |LCD 菜单项
  *
- * Disable all menus and only display the Status Screen, or    |
- * just remove some extraneous menu items to recover space.    |
+ * Disable all menus and only display the Status Screen, or    |禁用所有菜单并仅显示状态屏幕，或 
+ * just remove some extraneous menu items to recover space.    |只需删除一些无关的菜单项即可恢复空间。
  */
 //#define NO_LCD_MENUS
 //#define SLIM_LCD_MENUS
 
 //
-// ENCODER SETTINGS    |
+// ENCODER SETTINGS    |编码器设置 |
 //
-// This option overrides the default number of encoder pulses needed to    |
-// produce one step. Should be increased for high-resolution encoders.    |
+// This option overrides the default number of encoder pulses needed to    | 此选项会覆盖默认的编码器脉冲数。
+// produce one step. Should be increased for high-resolution encoders.    |产生一步。对于高分辨率编码器应增加。
 //
 //#define ENCODER_PULSES_PER_STEP 4
 
 //
-// Use this option to override the number of step signals required to    |
-// move between next/prev menu items.    |
+// Use this option to override the number of step signals required to    |使用此选项可以覆盖 | 所需的步进信号数量。
+// move between next/prev menu items.    |在下一个/上一个菜单项之间移动。 
 //
 //#define ENCODER_STEPS_PER_MENU_ITEM 1
 
@@ -1850,33 +1850,33 @@ FILAMENT_RUNOUT_SCRIPT 设置缺料检测激活时运行的脚本，一般为 M6
 REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编码器方向。
 有些液晶屏旋转编码器方向做反了，需要软件修正，
  *
- * Test your encoder's behavior first with both options disabled.    |
+ * Test your encoder's behavior first with both options disabled.    |首先在禁用这两个选项的情况下测试编码器的行为。
  *
- *  Reversed Value Edit and Menu Nav? Enable REVERSE_ENCODER_DIRECTION.    |
- *  Reversed Menu Navigation only?    Enable REVERSE_MENU_DIRECTION.    |
- *  Reversed Value Editing only?      Enable BOTH options.    |
+ *  Reversed Value Edit and Menu Nav? Enable REVERSE_ENCODER_DIRECTION.    |反转值编辑和菜单导航？启用 REVERSE_ENCODER_DIRECTION。
+ *  Reversed Menu Navigation only?    Enable REVERSE_MENU_DIRECTION.    |仅反向菜单导航？    启用 REVERSE_MENU_DIRECTION。
+ *  Reversed Value Editing only?      Enable BOTH options.    |仅限反转值编辑？      启用这两个选项。
  */
 
 //
-// This option reverses the encoder direction everywhere.    |
+// This option reverses the encoder direction everywhere.    |此选项会在各处反转编码器方向。 
 //
-//  Set this option if CLOCKWISE causes values to DECREASE    |
+//  Set this option if CLOCKWISE causes values to DECREASE    |如果“顺时针”导致值减小，请设置此选项
 //
 //#define REVERSE_ENCODER_DIRECTION
 
 //
-// This option reverses the encoder direction for navigating LCD menus.    |
+// This option reverses the encoder direction for navigating LCD menus.    |此选项反转编码器方向以导航 LCD 菜单。
 //
-//  If CLOCKWISE normally moves DOWN this makes it go UP.    |
-//  If CLOCKWISE normally moves UP this makes it go DOWN.    |
+//  If CLOCKWISE normally moves DOWN this makes it go UP.    | 如果“顺时针”通常向下移动，则它会向上移动。
+//  If CLOCKWISE normally moves UP this makes it go DOWN.    |如果顺时针通常向上移动，则它会向下移动。  
 //
 //#define REVERSE_MENU_DIRECTION
 
 //
-// This option reverses the encoder direction for Select Screen.    |
+// This option reverses the encoder direction for Select Screen.    |此选项反转选择屏幕的编码器方向。 
 //
-//  If CLOCKWISE normally moves LEFT this makes it go RIGHT.    |
-//  If CLOCKWISE normally moves RIGHT this makes it go LEFT.    |
+//  If CLOCKWISE normally moves LEFT this makes it go RIGHT.    |如果顺时针通常向左移动，则它会向右移动。
+//  If CLOCKWISE normally moves RIGHT this makes it go LEFT.    |如果顺时针通常向右移动，则它会向左移动。  
 //
 //#define REVERSE_SELECT_DIRECTION
 
@@ -1892,24 +1892,25 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 // SPEAKER/BUZZER
 //液晶屏蜂鸣器
 //SPEAKER 去掉注释，可开始液晶屏上的蜂鸣器，旋转编码旋转或者按下时蜂鸣器会发声。
-// If you have a speaker that can produce tones, enable it here.    |
-// By default Marlin assumes you have a buzzer with a fixed frequency.    |
+// If you have a speaker that can produce tones, enable it here.    |如果您有可以发出声音的扬声器，请在此处启用它。
+// By default Marlin assumes you have a buzzer with a fixed frequency.    |默认情况下，Marlin 假定您有一个固定频率的蜂鸣器。
 //
 //#define SPEAKER
 
 //
-// The duration and frequency for the UI feedback sound.    |
-// Set these to 0 to disable audio feedback in the LCD menus.    |
+// The duration and frequency for the UI feedback sound.    | UI 反馈声音的持续时间和频率。
+//  
+// Set these to 0 to disable audio feedback in the LCD menus.    |将这些设置为 0 可禁用 LCD 菜单中的音频反馈。
 //
-// Note: Test audio output with the G-Code:    |
-//  M300 S<frequency Hz> P<duration ms>    |
+// Note: Test audio output with the G-Code:    |注意：使用 G 代码测试音频输出：
+//  M300 S<frequency Hz> P<duration ms>    |M300 S<频率 Hz> P<持续时间 ms> 
 //
 //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
 //#define LCD_FEEDBACK_FREQUENCY_HZ 5000
 
 //=============================================================================
-//======================== LCD / Controller Selection =========================    |
-//========================   (Character-based LCDs)   =========================
+//======================== LCD / Controller Selection =========================    |LCD/控制器选择
+//========================   (Character-based LCDs)   =========================    |基于字符的 LCD）
 //=============================================================================
 
 //
@@ -1924,7 +1925,7 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define REPRAP_DISCOUNT_SMART_CONTROLLER
 
 //
-// Original RADDS LCD Display+Encoder+SDCardReader    |
+// Original RADDS LCD Display+Encoder+SDCardReader    |原装RADDS液晶显示屏+编码器+SD卡读卡器
 // http://doku.radds.org/dokumentation/lcd-display/
 //
 //#define RADDS_DISPLAY
@@ -1949,7 +1950,7 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 // GADGETS3D G3D LCD/SD Controller    |
 // https://reprap.org/wiki/RAMPS_1.3/1.4_GADGETS3D_Shield_with_Panel
 //
-// Note: Usually sold with a blue PCB.    |
+// Note: Usually sold with a blue PCB.    |注意：通常与蓝色 PCB 一起出售。
 //
 //#define G3D_PANEL
 
@@ -1960,76 +1961,76 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define RIGIDBOT_PANEL
 
 //
-//Makeboard 3D Printer Parts 3D Printer Mini Display 1602 Mini Controller    |
+//Makeboard 3D Printer Parts 3D Printer Mini Display 1602 Mini Controller    |Makeboard 3D 打印机零件 3D 打印机迷你显示器 1602 迷你控制器 
 // https://www.aliexpress.com/item/32765887917.html
 //
 //#define MAKEBOARD_MINI_2_LINE_DISPLAY_1602
 
 //
-// ANET and Tronxy 20x4 Controller
+// ANET and Tronxy 20x4 Controller    |ANET 和 Tronxy 20x4 控制器
 //
-//#define ZONESTAR_LCD            // Requires ADC_KEYPAD_PIN to be assigned to an analog pin.    |
-                                  // This LCD is known to be susceptible to electrical interference    |
-                                  // which scrambles the display.  Pressing any button clears it up.    |
-                                  // This is a LCD2004 display with 5 analog buttons.    |
+//#define ZONESTAR_LCD            // Requires ADC_KEYPAD_PIN to be assigned to an analog pin.    |需要将 ADC_KEYPAD_PIN 分配给模拟引脚。
+                                  // This LCD is known to be susceptible to electrical interference    |众所周知，这种 LCD 容易受到电气干扰
+                                  // which scrambles the display.  Pressing any button clears it up.    |这会扰乱显示。  按任意按钮即可将其清除。
+                                  // This is a LCD2004 display with 5 analog buttons.    |这是一个 LCD2004 显示屏，带有 5 个模拟按钮。
 
 //
-// Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.    |
+// Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.    |通用 16x2、16x4、20x2 或 20x4 基于字符的 LCD。
 //
 //#define ULTRA_LCD
 
 //=============================================================================
-//======================== LCD / Controller Selection =========================    |
-//=====================   (I2C and Shift-Register LCDs)   =====================    |
+//======================== LCD / Controller Selection =========================    |LCD/控制器选择
+//=====================   (I2C and Shift-Register LCDs)   =====================    |I2C 和移位寄存器 LCD）
 //=============================================================================
 
 //
-// CONTROLLER TYPE: I2C    |
+// CONTROLLER TYPE: I2C    |控制器类型：I2C |
 //
-// Note: These controllers require the installation of Arduino's LiquidCrystal_I2C    |
+// Note: These controllers require the installation of Arduino's LiquidCrystal_I2C    |注意：这些控制器需要安装Arduino的LiquidCrystal_I2C 
 // library. For more info: https://github.com/kiyoshigawa/LiquidCrystal_I2C
 //
 
 //
-// Elefu RA Board Control Panel    |
+// Elefu RA Board Control Panel    |Elefu RA板控制面板
 // http://www.elefu.com/index.php?route=product/product&product_id=53
 //
 //#define RA_CONTROL_PANEL
 
 //
-// Sainsmart (YwRobot) LCD Displays    |
+// Sainsmart (YwRobot) LCD Displays    |Sainsmart（YwRobot）液晶显示器
 //
-// These require F.Malpartida's LiquidCrystal_I2C library    |
+// These require F.Malpartida's LiquidCrystal_I2C library    |这些需要 F.Malpartida 的 LiquidCrystal_I2C 库
 // https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
 //
 //#define LCD_SAINSMART_I2C_1602
 //#define LCD_SAINSMART_I2C_2004
 
 //
-// Generic LCM1602 LCD adapter    |
+// Generic LCM1602 LCD adapter    |通用 LCM1602 LCD 适配器
 //
 //#define LCM1602
 
 //
-// PANELOLU2 LCD with status LEDs,    |
-// separate encoder and click inputs.    |
+// PANELOLU2 LCD with status LEDs,    | PANELOLU2 LCD 带状态 LED，
+// separate encoder and click inputs.    |单独的编码器和点击输入。
 //
-// Note: This controller requires Arduino's LiquidTWI2 library v1.2.3 or later.    |
+// Note: This controller requires Arduino's LiquidTWI2 library v1.2.3 or later.    |注意：该控制器需要 Arduino 的 LiquidTWI2 库 v1.2.3 或更高版本。
 // For more info: https://github.com/lincomatic/LiquidTWI2
 //
-// Note: The PANELOLU2 encoder click input can either be directly connected to    |
-// a pin (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).
+// Note: The PANELOLU2 encoder click input can either be directly connected to    |注意：PANELOLU2编码器点击输入可以直接连接到
+// a pin (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).    |引脚（如果 BTN_ENC 定义为！= -1）或通过 I2C 读取（当 BTN_ENC == -1 时）。
 //
 //#define LCD_I2C_PANELOLU2
 
 //
-// Panucatt VIKI LCD with status LEDs,    |
-// integrated click & L/R/U/D buttons, separate encoder inputs.    |
+// Panucatt VIKI LCD with status LEDs,    |带状态 LED 的 Panucatt VIKI LCD，
+// integrated click & L/R/U/D buttons, separate encoder inputs.    |集成点击和 L/R/U/D 按钮，独立的编码器输入。
 //
 //#define LCD_I2C_VIKI
 
 //
-// CONTROLLER TYPE: Shift register panels    |
+// CONTROLLER TYPE: Shift register panels    |控制器类型：移位寄存器面板
 //
 
 //
@@ -2039,15 +2040,15 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define SAV_3DLCD
 
 //
-// 3-wire SR LCD with strobe using 74HC4094    |
+// 3-wire SR LCD with strobe using 74HC4094    |使用 74HC4094 带频闪的 3 线 SR LCD 
 // https://github.com/mikeshub/SailfishLCD
-// Uses the code directly from Sailfish    |
+// Uses the code directly from Sailfish    |直接使用来自 Sailfish 的代码
 //
 //#define FF_INTERFACEBOARD
 
 //
-// TFT GLCD Panel with Marlin UI    |
-// Panel connected to main board by SPI or I2C interface.    |
+// TFT GLCD Panel with Marlin UI    |带有 Marlin UI 的 TFT GLCD 面板
+// Panel connected to main board by SPI or I2C interface.    |面板通过SPI或I2C接口与主板连接。 
 // See https://github.com/Serhiy-K/TFTGLCDAdapter
 //
 //#define TFTGLCD_PANEL_SPI
@@ -2055,122 +2056,122 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 
 //=============================================================================
 //=======================   LCD / Controller Selection  =======================
-//=========================      (Graphical LCDs)      ========================    |
+//=========================      (Graphical LCDs)      ========================    |（图形 LCD）
 //=============================================================================
 
 //
-// CONTROLLER TYPE: Graphical 128x64 (DOGM)    |
+// CONTROLLER TYPE: Graphical 128x64 (DOGM)    |控制器类型：图形 128x64 (DOGM) 
 //
-// IMPORTANT: The U8glib library is required for Graphical Display!    |
+// IMPORTANT: The U8glib library is required for Graphical Display!    |重要提示：图形显示需要 U8glib 库！  
 //            https://github.com/olikraus/U8glib_Arduino
 //
-// NOTE: If the LCD is unresponsive you may need to reverse the plugs.    |
+// NOTE: If the LCD is unresponsive you may need to reverse the plugs.    |注意：如果 LCD 无响应，您可能需要颠倒插头。
 //
 
 //液晶屏12864
 //去掉 REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER 行的注释，可开启12864液晶屏功能。需要u8glib库文件，否则编译无法通过，
-// RepRapDiscount FULL GRAPHIC Smart Controller    |
+// RepRapDiscount FULL GRAPHIC Smart Controller    |全图形智能控制器
 // https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
 //#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 
 //
-// ReprapWorld Graphical LCD    |
+// ReprapWorld Graphical LCD    |ReprapWorld 图形 LCD
 // https://reprapworld.com/?products_details&products_id/1218
 //
 //#define REPRAPWORLD_GRAPHICAL_LCD
 
 //
-// Activate one of these if you have a Panucatt Devices    |
-// Viki 2.0 or mini Viki with Graphic LCD    |
+// Activate one of these if you have a Panucatt Devices    |如果您有 Panucatt 设备，请激活其中一项
+// Viki 2.0 or mini Viki with Graphic LCD    |Viki 2.0 或带有图形 LCD 的迷你 Viki
 // https://www.panucatt.com
 //
 //#define VIKI2
 //#define miniVIKI
 
 //
-// MakerLab Mini Panel with graphic    |
+// MakerLab Mini Panel with graphic    |带图形的 MakerLab 迷你面板 
 // controller and SD support - https://reprap.org/wiki/Mini_panel
 //
 //#define MINIPANEL
 
 //
-// MaKr3d Makr-Panel with graphic controller and SD support.    |
+// MaKr3d Makr-Panel with graphic controller and SD support.    |MaKr3d Makr-Panel 具有图形控制器和 SD 支持。
 // https://reprap.org/wiki/MaKr3d_MaKrPanel
 //
 //#define MAKRPANEL
 
 //
-// Adafruit ST7565 Full Graphic Controller.    |
+// Adafruit ST7565 Full Graphic Controller.    |Adafruit ST7565 全图形控制器。
 // https://github.com/eboston/Adafruit-ST7565-Full-Graphic-Controller/
 //
 //#define ELB_FULL_GRAPHIC_CONTROLLER
 
 //
-// BQ LCD Smart Controller shipped by    |
-// default with the BQ Hephestos 2 and Witbox 2.    |
+// BQ LCD Smart Controller shipped by    |BQ液晶智能控制器发货|
+// default with the BQ Hephestos 2 and Witbox 2.    |默认使用 BQ Hephestos 2 和 Witbox 2。
 //
 //#define BQ_LCD_SMART_CONTROLLER
 
 //
-// Cartesio UI    |
+// Cartesio UI    |Cartesio 用户界面
 // http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
 //
 //#define CARTESIO_UI
 
 //
-// LCD for Melzi Card with Graphical LCD    |
+// LCD for Melzi Card with Graphical LCD    |带图形 LCD 的 Melzi 卡 LCD
 //
 //#define LCD_FOR_MELZI
 
 //
-// Original Ulticontroller from Ultimaker 2 printer with SSD1309 I2C display and encoder    |
+// Original Ulticontroller from Ultimaker 2 printer with SSD1309 I2C display and encoder    |Ultimaker 2 打印机的原装 Ulticontroller，带 SSD1309 I2C 显示屏和编码器
 // https://github.com/Ultimaker/Ultimaker2/tree/master/1249_Ulticontroller_Board_(x1)
 //
 //#define ULTI_CONTROLLER
 
 //
-// MKS MINI12864 with graphic controller and SD support    |
+// MKS MINI12864 with graphic controller and SD support    |具有图形控制器和 SD 支持的 MKS MINI12864
 // https://reprap.org/wiki/MKS_MINI_12864
 //
 //#define MKS_MINI_12864
 
 //
-// MKS LCD12864A/B with graphic controller and SD support. Follows MKS_MINI_12864 pinout.    |
+// MKS LCD12864A/B with graphic controller and SD support. Follows MKS_MINI_12864 pinout.    |MKS LCD12864A/B 具有图形控制器和 SD 支持。遵循 MKS_MINI_12864 引脚排列。
 // https://www.aliexpress.com/item/33018110072.html
 //
 //#define MKS_LCD12864
 
 //
-// FYSETC variant of the MINI12864 graphic controller with SD support    |
+// FYSETC variant of the MINI12864 graphic controller with SD support    |MINI12864 图形控制器的 FYSETC 变体，支持 SD
 // https://wiki.fysetc.com/Mini12864_Panel/
 //
-#define FYSETC_MINI_12864_X_X    // Type C/D/E/F. No tunable RGB Backlight by default    |
-//#define FYSETC_MINI_12864_1_2    // Type C/D/E/F. Simple RGB Backlight (always on)    |
-//#define FYSETC_MINI_12864_2_0    // Type A/B. Discreet RGB Backlight    |
-//#define FYSETC_MINI_12864_2_1    // Type A/B. NeoPixel RGB Backlight    |
-//#define FYSETC_GENERIC_12864_1_1 // Larger display with basic ON/OFF backlight.    |
+#define FYSETC_MINI_12864_X_X    // Type C/D/E/F. No tunable RGB Backlight by default    |C/D/E/F 型。默认情况下没有可调 RGB 背光 
+//#define FYSETC_MINI_12864_1_2    // Type C/D/E/F. Simple RGB Backlight (always on)    |类型 C/D/E/F。简单的 RGB 背光（常亮）
+//#define FYSETC_MINI_12864_2_0    // Type A/B. Discreet RGB Backlight    |类型 A/B。低调的 RGB 背光
+//#define FYSETC_MINI_12864_2_1    // Type A/B. NeoPixel RGB Backlight    |类型 A/B。 NeoPixel RGB 背光
+//#define FYSETC_GENERIC_12864_1_1 // Larger display with basic ON/OFF backlight.    |具有基本开/关背光的更大显示屏。
 
 //
-// Factory display for Creality CR-10    |
+// Factory display for Creality CR-10    | Creality CR-10 工厂展示 
 // https://www.aliexpress.com/item/32833148327.html
 //
-// This is RAMPS-compatible using a single 10-pin connector.    |
-// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+// This is RAMPS-compatible using a single 10-pin connector.    |它使用单个 10 针连接器与 RAMPS 兼容。
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)    |（适用于想要更换 Melzi Creality 板但保留显示屏的 CR-10 用户）
 //
 //#define CR10_STOCKDISPLAY
 
 //
-// Ender-2 OEM display, a variant of the MKS_MINI_12864    |
+// Ender-2 OEM display, a variant of the MKS_MINI_12864    |Ender-2 OEM 显示器，MKS_MINI_12864 的变体
 //
 //#define ENDER2_STOCKDISPLAY
 
 //
-// ANET and Tronxy Graphical Controller    |
+// ANET and Tronxy Graphical Controller    | ANET 和 Tronxy 图形控制器
 //
-// Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6    |
-// A clone of the RepRapDiscount full graphics display but with    |
-// different pins/wiring (see pins_ANET_10.h).    |
+// Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6    |Anet 128x64 全图形液晶显示屏，带旋转编码器，如 Anet A6 上使用的那样
+// A clone of the RepRapDiscount full graphics display but with    |RepRapDiscount 完整图形显示的克隆，但带有
+// different pins/wiring (see pins_ANET_10.h).    | 不同的引脚/接线（参见pins_ANET_10.h）。
 //
 //#define ANET_FULL_GRAPHICS_LCD
 
@@ -2187,16 +2188,16 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define SILVER_GATE_GLCD_CONTROLLER
 
 //=============================================================================
-//==============================  OLED Displays  ==============================    |
+//==============================  OLED Displays  ==============================    |OLED 显示屏
 //=============================================================================
 
 //
-// SSD1306 OLED full graphics generic display    |
+// SSD1306 OLED full graphics generic display    |SSD1306 OLED全显卡通用显示器
 //
 //#define U8GLIB_SSD1306
 
 //
-// SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules    |
+// SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules    |SAV OLED LCD 模块支持使用基于 SSD1306 或 SH1106 的 LCD 模块
 //
 //#define SAV_3DGLCD
 #if ENABLED(SAV_3DGLCD)
@@ -2205,25 +2206,25 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 #endif
 
 //
-// TinyBoy2 128x64 OLED / Encoder Panel    |
+// TinyBoy2 128x64 OLED / Encoder Panel    |TinyBoy2 128x64 OLED /编码器面板
 //
 //#define OLED_PANEL_TINYBOY2
 
 //
-// MKS OLED 1.3" 128×64 FULL GRAPHICS CONTROLLER    |
+// MKS OLED 1.3" 128×64 FULL GRAPHICS CONTROLLER    |MKS OLED 1.3" 128×64 全图形控制器 
 // https://reprap.org/wiki/MKS_12864OLED
 //
-// Tiny, but very sharp OLED display    |
+// Tiny, but very sharp OLED display    |微小但非常清晰的 OLED 显示屏 
 //
-//#define MKS_12864OLED          // Uses the SH1106 controller (default)    |
-//#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller    |
+//#define MKS_12864OLED          // Uses the SH1106 controller (default)    |使用 SH1106 控制器（默认）
+//#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller    |使用SSD1306控制器 
 
 //
-// Zonestar OLED 128×64 FULL GRAPHICS CONTROLLER    |
+// Zonestar OLED 128×64 FULL GRAPHICS CONTROLLER    | Zonestar OLED 128×64 全图形控制器
 //
-//#define ZONESTAR_12864LCD           // Graphical (DOGM) with ST7920 controller    |
-//#define ZONESTAR_12864OLED          // 1.3" OLED with SH1106 controller (default)    |
-//#define ZONESTAR_12864OLED_SSD1306  // 0.96" OLED with SSD1306 controller    |
+//#define ZONESTAR_12864LCD           // Graphical (DOGM) with ST7920 controller    |带 ST7920 控制器的图形 (DOGM) 
+//#define ZONESTAR_12864OLED          // 1.3" OLED with SH1106 controller (default)    |1.3" OLED，带 SH1106 控制器（默认）
+//#define ZONESTAR_12864OLED_SSD1306  // 0.96" OLED with SSD1306 controller    |0.96" OLED，带 SSD1306 控制器 
 
 //
 // Einstart S OLED SSD1306    |
@@ -2231,30 +2232,30 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define U8GLIB_SH1106_EINSTART
 
 //
-// Overlord OLED display/controller with i2c buzzer and LEDs    |
+// Overlord OLED display/controller with i2c buzzer and LEDs    |带 i2c 蜂鸣器和 LED 的 Overlord OLED 显示屏/控制器
 //
 //#define OVERLORD_OLED
 
 //
-// FYSETC OLED 2.42" 128×64 FULL GRAPHICS CONTROLLER with WS2812 RGB
+// FYSETC OLED 2.42" 128×64 FULL GRAPHICS CONTROLLER with WS2812 RGB    |FYSETC OLED 2.42" 128×64 全图形控制器 带 WS2812 RGB 
 // Where to find : https://www.aliexpress.com/item/4000345255731.html
 //#define FYSETC_242_OLED_12864   // Uses the SSD1309 controller
 
 //=============================================================================
-//========================== Extensible UI Displays ===========================    |
+//========================== Extensible UI Displays ===========================    |可扩展的 UI 显示
 //=============================================================================
 
 //
-// DGUS Touch Display with DWIN OS. (Choose one.)    |
-// ORIGIN : https://www.aliexpress.com/item/32993409517.html    |
-// FYSETC : https://www.aliexpress.com/item/32961471929.html    |
+// DGUS Touch Display with DWIN OS. (Choose one.)    |带 DWIN 操作系统的 DGUS 触摸显示屏。 （选择一项。）
+// ORIGIN : https://www.aliexpress.com/item/32993409517.html
+// FYSETC : https://www.aliexpress.com/item/32961471929.html
 //
 //#define DGUS_LCD_UI_ORIGIN
 //#define DGUS_LCD_UI_FYSETC
 //#define DGUS_LCD_UI_HIPRECY
 
 //
-// Touch-screen LCD for Malyan M200/M300 printers    |
+// Touch-screen LCD for Malyan M200/M300 printers    |适用于 Malyan M200/M300 打印机的触摸屏 LCD
 //
 //#define MALYAN_LCD
 #if ENABLED(MALYAN_LCD)
@@ -2262,13 +2263,13 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 #endif
 
 //
-// Touch UI for FTDI EVE (FT800/FT810) displays    |
-// See Configuration_adv.h for all configuration options.    |
+// Touch UI for FTDI EVE (FT800/FT810) displays    |FTDI EVE (FT800/FT810) 显示器的触摸 UI
+// See Configuration_adv.h for all configuration options.    |有关所有配置选项，请参阅 Configuration_adv.h。 
 //
 //#define TOUCH_UI_FTDI_EVE
 
 //
-// Touch-screen LCD for Anycubic printers    |
+// Touch-screen LCD for Anycubic printers    | 适用于 Anycubic 打印机的触摸屏 LCD
 //
 //#define ANYCUBIC_LCD_I3MEGA
 //#define ANYCUBIC_LCD_CHIRON
@@ -2278,30 +2279,30 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 #endif
 
 //
-// Third-party or vendor-customized controller interfaces.    |
-// Sources should be installed in 'src/lcd/extensible_ui'.    |
+// Third-party or vendor-customized controller interfaces.    |第三方或供应商定制的控制器接口。
+// Sources should be installed in 'src/lcd/extensible_ui'.    |源应安装在“src/lcd/extensible_ui”中。
 //
 //#define EXTENSIBLE_UI
 
 #if ENABLED(EXTENSIBLE_UI)
-  //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display    |
+  //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display    |允许在外部显示器上使用本地蜂鸣器引脚
 #endif
 
 //=============================================================================
-//=============================== Graphical TFTs ==============================    |
+//=============================== Graphical TFTs ==============================    |图形 TFT 
 //=============================================================================
 
 /**
- * TFT Type - Select your Display type    |
+ * TFT Type - Select your Display type    |TFT 类型 -选择您的显示器类型
  *
- * Available options are:    |
+ * Available options are:    |可用选项有
  *   MKS_TS35_V2_0,
  *   MKS_ROBIN_TFT24, MKS_ROBIN_TFT28, MKS_ROBIN_TFT32, MKS_ROBIN_TFT35,
  *   MKS_ROBIN_TFT43, MKS_ROBIN_TFT_V1_1R
  *   TFT_TRONXY_X5SA, ANYCUBIC_TFT35, LONGER_LK_TFT28
  *   TFT_GENERIC
  *
- * For TFT_GENERIC, you need to configure these 3 options:    |
+ * For TFT_GENERIC, you need to configure these 3 options:    |对于 TFT_GENERIC，您需要配置以下 3 个选项
  *   Driver:     TFT_DRIVER
  *               Current Drivers are: AUTO, ST7735, ST7789, ST7796, R61505, ILI9328, ILI9341, ILI9488
  *   Resolution: TFT_WIDTH and TFT_HEIGHT
@@ -2310,21 +2311,21 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define TFT_GENERIC
 
 /**
- * TFT UI - User Interface Selection. Enable one of the following options:    |
+ * TFT UI - User Interface Selection. Enable one of the following options:    |TFT UI -用户界面选择。启用以下选项之一
  *
- *   TFT_CLASSIC_UI - Emulated DOGM - 128x64 Upscaled    |
- *   TFT_COLOR_UI   - Marlin Default Menus, Touch Friendly, using full TFT capabilities    |
- *   TFT_LVGL_UI    - A Modern UI using LVGL    |
+ *   TFT_CLASSIC_UI - Emulated DOGM - 128x64 Upscaled    |TFT_CLASSIC_UI -模拟 DOGM -128x64 放大 
+ *   TFT_COLOR_UI   - Marlin Default Menus, Touch Friendly, using full TFT capabilities    |TFT_COLOR_UI -Marlin 默认菜单，触摸友好，使用完整的 TFT 功能
+ *   TFT_LVGL_UI    - A Modern UI using LVGL    |TFT_LVGL_UI -使用 LVGL 的现代 UI
  *
- *   For LVGL_UI also copy the 'assets' folder from the build directory to the    |
- *   root of your SD card, together with the compiled firmware.    |
+ *   For LVGL_UI also copy the 'assets' folder from the build directory to the    |对于 LVGL_UI，还将“assets”文件夹从构建目录复制到
+ *   root of your SD card, together with the compiled firmware.    |SD卡的根目录，以及编译好的固件。 
  */
 //#define TFT_CLASSIC_UI
 //#define TFT_COLOR_UI
 //#define TFT_LVGL_UI
 
 /**
- * TFT Rotation. Set to one of the following values:    |
+ * TFT Rotation. Set to one of the following values:    |TFT 旋转。设置为以下值之一
  *
  *   TFT_ROTATE_90,  TFT_ROTATE_90_MIRROR_X,  TFT_ROTATE_90_MIRROR_Y,
  *   TFT_ROTATE_180, TFT_ROTATE_180_MIRROR_X, TFT_ROTATE_180_MIRROR_Y,
@@ -2334,21 +2335,21 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 //#define TFT_ROTATION TFT_NO_ROTATION
 
 //=============================================================================
-//============================  Other Controllers  ============================    |
+//============================  Other Controllers  ============================    |其他控制器
 //=============================================================================
 
 //
-// Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.    |
+// Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.    |Ender-3 v2 OEM 显示器。带旋转编码器的 DWIN 显示器。
 //
 //#define DWIN_CREALITY_LCD
 
 //
-// ADS7843/XPT2046 ADC Touchscreen such as ILI9341 2.8    |
+// ADS7843/XPT2046 ADC Touchscreen such as ILI9341 2.8    |ADS7843/XPT2046 ADC触摸屏如ILI9341 2.8
 //
 //#define TOUCH_SCREEN
 #if ENABLED(TOUCH_SCREEN)
-  #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens    |
-  #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus    |
+  #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens    |(ms) 编辑屏幕的按钮重复延迟
+  #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus    |(ms) 菜单按钮重复延迟
 
   #define TOUCH_SCREEN_CALIBRATION
 
@@ -2359,11 +2360,11 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 #endif
 
 //
-// RepRapWorld REPRAPWORLD_KEYPAD v1.1    |
+// RepRapWorld REPRAPWORLD_KEYPAD v1.1
 // https://reprapworld.com/products/electronics/ramps/keypad_v1_0_fully_assembled/
 //
 //#define REPRAPWORLD_KEYPAD
-//#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0 // (mm) Distance to move per key-press
+//#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0 // (mm) Distance to move per key-press    |(mm) 每次按键移动的距离
 
 //=============================================================================
 //=============================== Extra Features ==============================    |额外功能
@@ -2371,68 +2372,68 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
 
 // @section extras
 
-// Set number of user-controlled fans. Disable to use all board-defined fans.    |
+// Set number of user-controlled fans. Disable to use all board-defined fans.    |设置用户控制的风扇数量。禁止使用所有主板定义的风扇。
 // :[1,2,3,4,5,6,7,8]
 //#define NUM_M106_FANS 1
 
-// Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino    |
+// Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino    |增加风扇 PWM 频率。消除 PWM 噪声，但会增加 FET/Arduino 的发热
 //#define FAST_PWM_FAN
 
-// Use software PWM to drive the fan, as for the heaters. This uses a very low frequency    |
-// which is not as annoying as with the hardware PWM. On the other hand, if this frequency    |
-// is too low, you should also increment SOFT_PWM_SCALE.    |
+// Use software PWM to drive the fan, as for the heaters. This uses a very low frequency    |使用软件 PWM 来驱动风扇，就像加热器一样。这使用了非常低的频率|
+// which is not as annoying as with the hardware PWM. On the other hand, if this frequency    |这不像硬件 PWM 那样令人烦恼。另一方面，如果这个频率
+// is too low, you should also increment SOFT_PWM_SCALE.    |太低，您还应该增加 SOFT_PWM_SCALE。
 #define FAN_SOFT_PWM
 
-// Incrementing this by 1 will double the software PWM frequency,    |
-// affecting heaters, and the fan if FAN_SOFT_PWM is enabled.    |
-// However, control resolution will be halved for each increment;    |
-// at zero value, there are 128 effective control positions.    |
+// Incrementing this by 1 will double the software PWM frequency,    |将其增加 1 将使软件 PWM 频率加倍，
+// affecting heaters, and the fan if FAN_SOFT_PWM is enabled.    |如果启用了 FAN_SOFT_PWM，则会影响加热器和风扇。
+// However, control resolution will be halved for each increment;    |然而，每次增量控制分辨率将减半；
+// at zero value, there are 128 effective control positions.    |零值时，有 128 个有效控制位置。 
 // :[0,1,2,3,4,5,6,7]
 #define SOFT_PWM_SCALE 2
 
-// If SOFT_PWM_SCALE is set to a value higher than 0, dithering can    |
-// be used to mitigate the associated resolution loss. If enabled,    |
-// some of the PWM cycles are stretched so on average the desired    |
-// duty cycle is attained.
+// If SOFT_PWM_SCALE is set to a value higher than 0, dithering can    |如果 SOFT_PWM_SCALE 设置为大于 0 的值，则可以进行抖动 
+// be used to mitigate the associated resolution loss. If enabled,    |用于减轻相关的分辨率损失。如果启用，
+// some of the PWM cycles are stretched so on average the desired    |一些 PWM 周期被延长，因此平均而言，所需的
+// duty cycle is attained.    |达到占空比。
 #define SOFT_PWM_DITHER
 
-// Temperature status LEDs that display the hotend and bed temperature.    |
-// If all hotends, bed temperature, and target temperature are under 54C    |
-// then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)    |
+// Temperature status LEDs that display the hotend and bed temperature.    |温度状态 LED 显示热端和床温度。 
+// If all hotends, bed temperature, and target temperature are under 54C    |如果所有热端、床温和目标温度均低于 54C 
+// then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)    |然后蓝色 LED 亮起。否则红色 LED 亮起。 （1C 迟滞）
 //#define TEMP_STAT_LEDS
 
-// Support for the BariCUDA Paste Extruder    |
+// Support for the BariCUDA Paste Extruder    |支持 BariCUDA 糊料挤出机
 //#define BARICUDA
 
-// Support for BlinkM/CyzRgb    |
+// Support for BlinkM/CyzRgb    |支持 BlinkM/CyzRgb
 //#define BLINKM
 
-// Support for PCA9632 PWM LED driver    |
+// Support for PCA9632 PWM LED driver
 //#define PCA9632
 
-// Support for PCA9533 PWM LED driver    |
+// Support for PCA9533 PWM LED driver
 //#define PCA9533
 
 /**
- * RGB LED / LED Strip Control    |
+ * RGB LED / LED Strip Control    |RGB LED /LED 灯带控制 
  *
- * Enable support for an RGB LED connected to 5V digital pins, or    |
- * an RGB Strip connected to MOSFETs controlled by digital pins.    |
+ * Enable support for an RGB LED connected to 5V digital pins, or    |启用对连接到 5V 数字引脚的 RGB LED 的支持，或
+ * an RGB Strip connected to MOSFETs controlled by digital pins.    |连接到由数字引脚控制的 MOSFET 的 RGB 灯带。
  *
- * Adds the M150 command to set the LED (or LED strip) color.    |
- * If pins are PWM capable (e.g., 4, 5, 6, 11) then a range of    |
- * luminance values can be set from 0 to 255.    |
- * For NeoPixel LED an overall brightness parameter is also available.    |
+ * Adds the M150 command to set the LED (or LED strip) color.    |新增M150指令设置LED（或LED灯条）颜色。
+ * If pins are PWM capable (e.g., 4, 5, 6, 11) then a range of    |如果引脚支持 PWM（例如 4、5、6、11），则 | 的范围
+ * luminance values can be set from 0 to 255.    |亮度值可设置为 0 到 255。
+ * For NeoPixel LED an overall brightness parameter is also available.    |对于 NeoPixel LED，还提供整体亮度参数。
  *
- * *** CAUTION ***    |
- *  LED Strips require a MOSFET Chip between PWM lines and LEDs,    |
- *  as the Arduino cannot handle the current the LEDs will require.    |
- *  Failure to follow this precaution can destroy your Arduino!    |
- *  NOTE: A separate 5V power supply is required! The NeoPixel LED needs    |
- *  more current than the Arduino 5V linear regulator can produce.    |
+ * *** CAUTION ***    |注意
+ *  LED Strips require a MOSFET Chip between PWM lines and LEDs,    |LED 灯条需要在 PWM 线路和 LED 之间安装 MOSFET 芯片，
+ *  as the Arduino cannot handle the current the LEDs will require.    |因为 Arduino 无法处理 LED 所需的电流。
+ *  Failure to follow this precaution can destroy your Arduino!    |不遵守此预防措施可能会损坏您的 Arduino！
+ *  NOTE: A separate 5V power supply is required! The NeoPixel LED needs    |注意：需要单独的 5V 电源！ NeoPixel LED 需求
+ *  more current than the Arduino 5V linear regulator can produce.    |比 Arduino 5V 线性稳压器可产生的电流更大。
  * *** CAUTION ***
  *
- * LED Type. Enable only one of the following two options.    |
+ * LED Type. Enable only one of the following two options.    |LED 类型。仅启用以下两个选项之一。 
  */
 //#define RGB_LED
 //#define RGBW_LED
@@ -2444,24 +2445,24 @@ REVERSE_MENU_DIRECTION 去掉注释，反转液晶屏上选择菜单时旋转编
   //#define RGB_LED_W_PIN -1
 #endif
 
-// Support for Adafruit NeoPixel LED driver    |
+// Support for Adafruit NeoPixel LED driver    |支持 Adafruit NeoPixel LED 驱动器
 //#define NEOPIXEL_LED
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE   NEO_GRBW // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)    |
-  #define NEOPIXEL_PIN     4       // LED driving pin    |
+  #define NEOPIXEL_TYPE   NEO_GRBW // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)    |NEO_GRBW /NEO_GRB -四/三通道驱动程序类型（在 Adafruit_NeoPixel.h 中定义）
+  #define NEOPIXEL_PIN     4       // LED driving pin    | LED驱动引脚
   //#define NEOPIXEL2_TYPE NEOPIXEL_TYPE
   //#define NEOPIXEL2_PIN    5
-  #define NEOPIXEL_PIXELS 30       // Number of LEDs in the strip. (Longest strip when NEOPIXEL2_SEPARATE is disabled.)    |
-  #define NEOPIXEL_IS_SEQUENTIAL   // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.    |
-  #define NEOPIXEL_BRIGHTNESS 127  // Initial brightness (0-255)    |
-  //#define NEOPIXEL_STARTUP_TEST  // Cycle through colors at startup    |
+  #define NEOPIXEL_PIXELS 30       // Number of LEDs in the strip. (Longest strip when NEOPIXEL2_SEPARATE is disabled.)    |灯条中 LED 的数量。 （禁用 NEOPIXEL2_SEPARATE 时的最长条带。）
+  #define NEOPIXEL_IS_SEQUENTIAL   // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.    |温度变化的顺序显示 -LED 接 LED。禁止同时更改所有 LED。
+  #define NEOPIXEL_BRIGHTNESS 127  // Initial brightness (0-255)    |初始亮度（0-255） 
+  //#define NEOPIXEL_STARTUP_TEST  // Cycle through colors at startup    |在启动时循环切换颜色
 
-  // Support for second Adafruit NeoPixel LED driver controlled with M150 S1 ...    |
+  // Support for second Adafruit NeoPixel LED driver controlled with M150 S1 ...    |支持使用 M150 S1 控制的第二个 Adafruit NeoPixel LED 驱动器
   //#define NEOPIXEL2_SEPARATE
   #if ENABLED(NEOPIXEL2_SEPARATE)
-    #define NEOPIXEL2_PIXELS      15  // Number of LEDs in the second strip    |
-    #define NEOPIXEL2_BRIGHTNESS 127  // Initial brightness (0-255)    |
-    #define NEOPIXEL2_STARTUP_TEST    // Cycle through colors at startup    |
+    #define NEOPIXEL2_PIXELS      15  // Number of LEDs in the second strip    |第二个灯带中的 LED 数量
+    #define NEOPIXEL2_BRIGHTNESS 127  // Initial brightness (0-255)    |初始亮度（0-255）
+    #define NEOPIXEL2_STARTUP_TEST    // Cycle through colors at startup    |启动时循环切换颜色
   #else
     //#define NEOPIXEL2_INSERIES      // Default behavior is NeoPixel 2 in parallel    |默认行为是并行 NeoPixel 2 
   #endif
