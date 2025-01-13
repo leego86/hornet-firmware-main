@@ -24,39 +24,39 @@
 /**
  * Configuration_adv.h
  *
- * Advanced settings.
- * Only change these if you know exactly what you're doing.
- * Some of these settings can damage your printer if improperly set!
+ * Advanced settings.    |高级设置。
+ * Only change these if you know exactly what you're doing.    |仅当您确切知道自己在做什么时才更改这些。
+ * Some of these settings can damage your printer if improperly set!    |如果设置不当，其中一些设置可能会损坏您的打印机！
  *
- * Basic settings can be found in Configuration.h
+ * Basic settings can be found in Configuration.h    |基本设置可以在Configuration.h中找到
  */
 #define CONFIGURATION_ADV_H_VERSION 020007
 
 //===========================================================================
-//============================= Thermal Settings ============================
+//============================= Thermal Settings ============================    |散热设置
 //===========================================================================
 // @section temperature
 
 /**
- * Thermocouple sensors are quite sensitive to noise.  Any noise induced in
- * the sensor wires, such as by stepper motor wires run in parallel to them,
- * may result in the thermocouple sensor reporting spurious errors.  This
- * value is the number of errors which can occur in a row before the error
- * is reported.  This allows us to ignore intermittent error conditions while
- * still detecting an actual failure, which should result in a continuous
- * stream of errors from the sensor.
+ * Thermocouple sensors are quite sensitive to noise.  Any noise induced in    |热电偶传感器对噪声非常敏感。  任何引起的噪音
+ * the sensor wires, such as by stepper motor wires run in parallel to them,    |传感器线，例如与它们平行的步进电机线，
+ * may result in the thermocouple sensor reporting spurious errors.  This    |可能会导致热电偶传感器报告虚假错误。  这
+ * value is the number of errors which can occur in a row before the error    |value 是该错误之前连续发生的错误数
+ * is reported.  This allows us to ignore intermittent error conditions while    |已报告。  这使我们能够忽略间歇性错误情况
+ * still detecting an actual failure, which should result in a continuous    |仍在检测实际故障，这应该会导致连续的
+ * stream of errors from the sensor.    |来自传感器的错误流。
  *
- * Set this value to 0 to fail on the first error to occur.
+ * Set this value to 0 to fail on the first error to occur.    |将此值设置为 0 会在第一次发生错误时失败。
  */
 #define THERMOCOUPLE_MAX_ERRORS 15
 
 //
-// Custom Thermistor 1000 parameters
+// Custom Thermistor 1000 parameters    |定制热敏电阻1000个参数
 //
 #if TEMP_SENSOR_0 == 1000
-  #define HOTEND0_PULLUP_RESISTOR_OHMS 4700    // Pullup resistor
-  #define HOTEND0_RESISTANCE_25C_OHMS  100000  // Resistance at 25C
-  #define HOTEND0_BETA                 3950    // Beta value
+  #define HOTEND0_PULLUP_RESISTOR_OHMS 4700    // Pullup resistor    |上拉电阻
+  #define HOTEND0_RESISTANCE_25C_OHMS  100000  // Resistance at 25C    |25C时电阻
+  #define HOTEND0_BETA                 3950    // Beta value    |贝塔值
 #endif
 
 #if TEMP_SENSOR_1 == 1000
@@ -114,7 +114,7 @@
 #endif
 
 //
-// Hephestos 2 24V heated bed upgrade kit.
+// Hephestos 2 24V heated bed upgrade kit.    |Hephestos 2 24V 加热床升级套件。
 // https://store.bq.com/en/heated-bed-kit-hephestos2
 //
 //#define HEPHESTOS2_HEATED_BED_KIT
@@ -125,12 +125,12 @@
 #endif
 
 //
-// Heated Bed Bang-Bang options
+// Heated Bed Bang-Bang options    |加热床 Bang-Bang 选项
 //
 #if DISABLED(PIDTEMPBED)
-  #define BED_CHECK_INTERVAL 5000   // (ms) Interval between checks in bang-bang control
+  #define BED_CHECK_INTERVAL 5000   // (ms) Interval between checks in bang-bang control    |(ms) bang-bang 控制中检查之间的时间间隔
   #if ENABLED(BED_LIMIT_SWITCHING)
-    #define BED_HYSTERESIS 2        // (°C) Only set the relevant heater state when ABS(T-target) > BED_HYSTERESIS
+    #define BED_HYSTERESIS 2        // (°C) Only set the relevant heater state when ABS(T-target) > BED_HYSTERESIS    |(°C) 仅当 ABS(T-target) > BED_HYSTERESIS 时设置相关加热器状态
   #endif
 #endif
 
@@ -140,29 +140,29 @@
 #if TEMP_SENSOR_CHAMBER
   #define CHAMBER_MINTEMP             5
   #define CHAMBER_MAXTEMP            60
-  #define TEMP_CHAMBER_HYSTERESIS     1   // (°C) Temperature proximity considered "close enough" to the target
+  #define TEMP_CHAMBER_HYSTERESIS     1   // (°C) Temperature proximity considered "close enough" to the target    |(°C) 温度接近度被认为与目标“足够接近”
   //#define CHAMBER_LIMIT_SWITCHING
-  //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
+  //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin    |室加热器开/关销
   //#define HEATER_CHAMBER_INVERTING false
 
-  //#define CHAMBER_FAN               // Enable a fan on the chamber
+  //#define CHAMBER_FAN               // Enable a fan on the chamber    |启用腔室上的风扇
   #if ENABLED(CHAMBER_FAN)
-    #define CHAMBER_FAN_MODE 2        // Fan control mode: 0=Static; 1=Linear increase when temp is higher than target; 2=V-shaped curve.
+    #define CHAMBER_FAN_MODE 2        // Fan control mode: 0=Static; 1=Linear increase when temp is higher than target; 2=V-shaped curve.    |风扇控制模式：0=静态； 1=温度高于目标值时线性增加； 2=V形曲线。
     #if CHAMBER_FAN_MODE == 0
-      #define CHAMBER_FAN_BASE  255   // Chamber fan PWM (0-255)
+      #define CHAMBER_FAN_BASE  255   // Chamber fan PWM (0-255)    |室风扇 PWM (0-255)
     #elif CHAMBER_FAN_MODE == 1
-      #define CHAMBER_FAN_BASE  128   // Base chamber fan PWM (0-255); turns on when chamber temperature is above the target
-      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C above target
+      #define CHAMBER_FAN_BASE  128   // Base chamber fan PWM (0-255); turns on when chamber temperature is above the target    |底室风扇 PWM（0-255）；当腔室温度高于目标温度时打开
+      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C above target    |高于目标每°C PWM 增加
     #elif CHAMBER_FAN_MODE == 2
-      #define CHAMBER_FAN_BASE  128   // Minimum chamber fan PWM (0-255)
-      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C difference from target
+      #define CHAMBER_FAN_BASE  128   // Minimum chamber fan PWM (0-255)    |最小室风扇 PWM (0-255)
+      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C difference from target    |与目标相差每°C，PWM 就会增加
     #endif
   #endif
 
-  //#define CHAMBER_VENT              // Enable a servo-controlled vent on the chamber
+  //#define CHAMBER_VENT              // Enable a servo-controlled vent on the chamber    |在腔室上启用伺服控制通风口
   #if ENABLED(CHAMBER_VENT)
-    #define CHAMBER_VENT_SERVO_NR  1  // Index of the vent servo
-    #define HIGH_EXCESS_HEAT_LIMIT 5  // How much above target temp to consider there is excess heat in the chamber
+    #define CHAMBER_VENT_SERVO_NR  1  // Index of the vent servo    |通风伺服系统索引
+    #define HIGH_EXCESS_HEAT_LIMIT 5  // How much above target temp to consider there is excess heat in the chamber    | 高于目标温度多少才算考虑室内有多余热量
     #define LOW_EXCESS_HEAT_LIMIT 3
     #define MIN_COOLING_SLOPE_TIME_CHAMBER_VENT 20
     #define MIN_COOLING_SLOPE_DEG_CHAMBER_VENT 1.5
@@ -170,28 +170,28 @@
 #endif
 
 /**
- * Thermal Protection provides additional protection to your printer from damage
- * and fire. Marlin always includes safe min and max temperature ranges which
- * protect against a broken or disconnected thermistor wire.
+ * Thermal Protection provides additional protection to your printer from damage    |热保护为您的打印机提供额外保护，使其免受损坏
+ * and fire. Marlin always includes safe min and max temperature ranges which    |和火。 Marlin 始终包含安全的最低和最高温度范围，
+ * protect against a broken or disconnected thermistor wire.    |防止热敏电阻线断裂或断开。
  *
- * The issue: If a thermistor falls out, it will report the much lower
- * temperature of the air in the room, and the the firmware will keep
- * the heater on.
+ * The issue: If a thermistor falls out, it will report the much lower    |问题：如果热敏电阻脱落，它将报告低得多的值
+ * temperature of the air in the room, and the the firmware will keep    |房间内的空气温度，固件会保持
+ * the heater on.    |加热器打开。
  *
- * The solution: Once the temperature reaches the target, start observing.
- * If the temperature stays too far below the target (hysteresis) for too
- * long (period), the firmware will halt the machine as a safety precaution.
+ * The solution: Once the temperature reaches the target, start observing.    |解决办法：一旦温度达到目标，就开始观察。
+ * If the temperature stays too far below the target (hysteresis) for too    |如果温度太长时间低于目标（滞后）
+ * long (period), the firmware will halt the machine as a safety precaution.    |长时间（期间），固件将停止机器作为安全预防措施。
  *
- * If you get false positives for "Thermal Runaway", increase
+ * If you get false positives for "Thermal Runaway", increase    |如果您得到“热失控”误报，请增加
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
 #if ENABLED(THERMAL_PROTECTION_HOTENDS)
   #define THERMAL_PROTECTION_PERIOD 40        // Seconds
-  #define THERMAL_PROTECTION_HYSTERESIS 4     // Degrees Celsius
+  #define THERMAL_PROTECTION_HYSTERESIS 4     // Degrees Celsius    | 摄氏度
 
-  //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops
+  //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops    |如果温度下降，冷却风扇变慢
   #if BOTH(ADAPTIVE_FAN_SLOWING, PIDTEMP)
-    //#define NO_FAN_SLOWING_IN_PID_TUNING    // Don't slow fan speed during M303
+    //#define NO_FAN_SLOWING_IN_PID_TUNING    // Don't slow fan speed during M303    |在 M303 期间不要降低风扇速度
   #endif
 
   /**
@@ -2443,26 +2443,7 @@
   #define E7_SLAVE_ADDRESS 0
 
   /**
-   * Software enable
-   *
-   * Use for drivers that do not use a dedicated enable pin, but rather handle the same
-   * function through a communication line such as SPI or UART.
-   */
-  //#define SOFTWARE_DRIVER_ENABLE
-
-  /**
-   * TMC2130, TMC2160, TMC2208, TMC2209, TMC5130 and TMC5160 only
-   * Use Trinamic's ultra quiet stepping mode.
-   * When disabled, Marlin will use spreadCycle stepping mode.
-   */
-  #define STEALTHCHOP_XY
-  #define STEALTHCHOP_Z
-  #define STEALTHCHOP_E
-
-  /**
-   * Optimize spreadCycle chopper parameters by using predefined parameter sets
-   * or with the help of an example included in the library.
-   * Provided parameter sets are
+   * Software enable(°C) 仅当 ABS(T-target) > BED_HYSTERESIS 时设置相关加热器状态
    * CHOPPER_DEFAULT_12V
    * CHOPPER_DEFAULT_19V
    * CHOPPER_DEFAULT_24V
