@@ -195,170 +195,170 @@
   #endif
 
   /**
-   * Whenever an M104, M109, or M303 increases the target temperature, the
-   * firmware will wait for the WATCH_TEMP_PERIOD to expire. If the temperature
-   * hasn't increased by WATCH_TEMP_INCREASE degrees, the machine is halted and
-   * requires a hard reset. This test restarts with any M104/M109/M303, but only
-   * if the current temperature is far enough below the target for a reliable
-   * test.
+   * Whenever an M104, M109, or M303 increases the target temperature, the    |每当 M104、M109 或 M303 增加目标温度时，
+   * firmware will wait for the WATCH_TEMP_PERIOD to expire. If the temperature    |固件将等待 WATCH_TEMP_PERIOD 到期。如果温度
+   * hasn't increased by WATCH_TEMP_INCREASE degrees, the machine is halted and |尚未增加 WATCH_TEMP_INCREASE 度，机器停止运行并且
+   * requires a hard reset. This test restarts with any M104/M109/M303, but only  |需要硬重置。此测试会使用任何 M104/M109/M303 重新启动，但仅限
+   * if the current temperature is far enough below the target for a reliable |如果当前温度远低于可靠的目标温度
+   * test.  |测试
    *
-   * If you get false positives for "Heating failed", increase WATCH_TEMP_PERIOD
-   * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
-   * below 2.
+   * If you get false positives for "Heating failed", increase WATCH_TEMP_PERIOD  |如果您收到“加热失败”的误报，请增加 WATCH_TEMP_PERIOD
+   * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set |和/或减少 WATCH_TEMP_INCREASE。不应设置 WATCH_TEMP_INCREASE
+   * below 2. |低于2
    */
-  #define WATCH_TEMP_PERIOD 20                // Seconds
-  #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
+  #define WATCH_TEMP_PERIOD 20                // Seconds    |秒
+  #define WATCH_TEMP_INCREASE 2               // Degrees Celsius    |摄氏度
 #endif
 
 /**
- * Thermal Protection parameters for the bed are just as above for hotends.
+ * Thermal Protection parameters for the bed are just as above for hotends.   |床的热保护参数与上面热端的热保护参数相同。
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
   #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
 
   /**
-   * As described above, except for the bed (M140/M190/M303).
+   * As described above, except for the bed (M140/M190/M303).   |如上所述，床 (M140/M190/M303) 除外。
    */
   #define WATCH_BED_TEMP_PERIOD                60 // Seconds
   #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
 #endif
 
-/**
- * Thermal Protection parameters for the heated chamber.
+/** 
+ * Thermal Protection parameters for the heated chamber.    |加热室的热保护参数。
  */
 #if ENABLED(THERMAL_PROTECTION_CHAMBER)
   #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // Seconds
   #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
 
   /**
-   * Heated chamber watch settings (M141/M191).
+   * Heated chamber watch settings (M141/M191).   |加热室手表设置 (M141/M191)。
    */
   #define WATCH_CHAMBER_TEMP_PERIOD            60 // Seconds
   #define WATCH_CHAMBER_TEMP_INCREASE           2 // Degrees Celsius
 #endif
 
 #if ENABLED(PIDTEMP)
-  // Add an experimental additional term to the heater power, proportional to the extrusion speed.
-  // A well-chosen Kc value should add just enough power to melt the increased material volume.
+  // Add an experimental additional term to the heater power, proportional to the extrusion speed.    | 在加热器功率中添加一个实验附加项，与挤出速度成正比。
+  // A well-chosen Kc value should add just enough power to melt the increased material volume.   |精心选择的 Kc 值应添加足够的功率来熔化增加的材料体积。
   //#define PID_EXTRUSION_SCALING
   #if ENABLED(PID_EXTRUSION_SCALING)
-    #define DEFAULT_Kc (100) // heating power = Kc * e_speed
+    #define DEFAULT_Kc (100) // heating power = Kc * e_speed    | 加热功率 = Kc *e_speed
     #define LPQ_MAX_LEN 50
   #endif
 
   /**
-   * Add an experimental additional term to the heater power, proportional to the fan speed.
-   * A well-chosen Kf value should add just enough power to compensate for power-loss from the cooling fan.
-   * You can either just add a constant compensation with the DEFAULT_Kf value
-   * or follow the instruction below to get speed-dependent compensation.
+   * Add an experimental additional term to the heater power, proportional to the fan speed.    |在加热器功率中添加一个实验附加项，与风扇速度成正比。
+   * A well-chosen Kf value should add just enough power to compensate for power-loss from the cooling fan.   |精心选择的 Kf 值应添加足够的功率来补偿冷却风扇的功率损耗。
+   * You can either just add a constant compensation with the DEFAULT_Kf value    |您可以只添加一个带有 DEFAULT_Kf 值的常数补偿
+   * or follow the instruction below to get speed-dependent compensation.   |或按照以下说明获得速度相关补偿。
    *
-   * Constant compensation (use only with fanspeeds of 0% and 100%)
+   * Constant compensation (use only with fanspeeds of 0% and 100%)   |恒定补偿（仅适用于 0% 和 100% 的风扇速度）
    * ---------------------------------------------------------------------
-   * A good starting point for the Kf-value comes from the calculation:
+   * A good starting point for the Kf-value comes from the calculation:   |Kf 值的一个很好的起点来自于计算：
    *   kf = (power_fan * eff_fan) / power_heater * 255
-   * where eff_fan is between 0.0 and 1.0, based on fan-efficiency and airflow to the nozzle / heater.
+   * where eff_fan is between 0.0 and 1.0, based on fan-efficiency and airflow to the nozzle / heater.    |其中 eff_fan 介于 0.0 和 1.0 之间，基于风扇效率和喷嘴/加热器的气流。
    *
    * Example:
-   *   Heater: 40W, Fan: 0.1A * 24V = 2.4W, eff_fan = 0.8
+   *   Heater: 40W, Fan: 0.1A * 24V = 2.4W, eff_fan = 0.8   |加热器：40W，风扇：0.1A 24V = 2.4W，eff_fan = 0.8
    *   Kf = (2.4W * 0.8) / 40W * 255 = 12.24
    *
-   * Fan-speed dependent compensation
+   * Fan-speed dependent compensation   |风扇速度相关补偿
    * --------------------------------
-   * 1. To find a good Kf value, set the hotend temperature, wait for it to settle, and enable the fan (100%).
-   *    Make sure PID_FAN_SCALING_LIN_FACTOR is 0 and PID_FAN_SCALING_ALTERNATIVE_DEFINITION is not enabled.
-   *    If you see the temperature drop repeat the test, increasing the Kf value slowly, until the temperature
-   *    drop goes away. If the temperature overshoots after enabling the fan, the Kf value is too big.
-   * 2. Note the Kf-value for fan-speed at 100%
-   * 3. Determine a good value for PID_FAN_SCALING_MIN_SPEED, which is around the speed, where the fan starts moving.
-   * 4. Repeat step 1. and 2. for this fan speed.
-   * 5. Enable PID_FAN_SCALING_ALTERNATIVE_DEFINITION and enter the two identified Kf-values in
-   *    PID_FAN_SCALING_AT_FULL_SPEED and PID_FAN_SCALING_AT_MIN_SPEED. Enter the minimum speed in PID_FAN_SCALING_MIN_SPEED
+   * 1. To find a good Kf value, set the hotend temperature, wait for it to settle, and enable the fan (100%).  |要找到合适的 Kf 值，请设置热端温度，等待其稳定下来，然后启用风扇 (100%)。
+   *    Make sure PID_FAN_SCALING_LIN_FACTOR is 0 and PID_FAN_SCALING_ALTERNATIVE_DEFINITION is not enabled.  |确保 PID_FAN_SCALING_LIN_FACTOR 为 0 并且 PID_FAN_SCALING_ALTERNATIVE_DEFINITION 未启用。
+   *    If you see the temperature drop repeat the test, increasing the Kf value slowly, until the temperature  |如果您看到温度下降，请重复测试，缓慢增加 Kf 值，直到温度下降
+   *    drop goes away. If the temperature overshoots after enabling the fan, the Kf value is too big.  |水滴消失。如果开启风扇后温度超调，说明Kf值太大。
+   * 2. Note the Kf-value for fan-speed at 100% |注意风扇速度 100% 时的 Kf 值
+   * 3. Determine a good value for PID_FAN_SCALING_MIN_SPEED, which is around the speed, where the fan starts moving. | 为 PID_FAN_SCALING_MIN_SPEED 确定一个合适的值，该值大约是风扇开始移动的速度。
+   * 4. Repeat step 1. and 2. for this fan speed. |针对此风扇速度重复步骤 1. 和 2.。
+   * 5. Enable PID_FAN_SCALING_ALTERNATIVE_DEFINITION and enter the two identified Kf-values in |启用 PID_FAN_SCALING_ALTERNATIVE_DEFINITION 并在中输入两个识别的 Kf 值
+   *    PID_FAN_SCALING_AT_FULL_SPEED and PID_FAN_SCALING_AT_MIN_SPEED. Enter the minimum speed in PID_FAN_SCALING_MIN_SPEED  |PID_FAN_SCALING_AT_FULL_SPEED 和 PID_FAN_SCALING_AT_MIN_SPEED。在 PID_FAN_SCALING_MIN_SPEED 中输入最小速度
    */
   //#define PID_FAN_SCALING
   #if ENABLED(PID_FAN_SCALING)
     //#define PID_FAN_SCALING_ALTERNATIVE_DEFINITION
     #if ENABLED(PID_FAN_SCALING_ALTERNATIVE_DEFINITION)
-      // The alternative definition is used for an easier configuration.
-      // Just figure out Kf at fullspeed (255) and PID_FAN_SCALING_MIN_SPEED.
-      // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.
+      // The alternative definition is used for an easier configuration.  |使用替代定义是为了更容易配置。
+      // Just figure out Kf at fullspeed (255) and PID_FAN_SCALING_MIN_SPEED. |只需算出全速时的 Kf (255) 和 PID_FAN_SCALING_MIN_SPEED 即可。
+      // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.  |DEFAULT_Kf 和 PID_FAN_SCALING_LIN_FACTOR 会相应计算。
 
       #define PID_FAN_SCALING_AT_FULL_SPEED 13.0        //=PID_FAN_SCALING_LIN_FACTOR*255+DEFAULT_Kf
       #define PID_FAN_SCALING_AT_MIN_SPEED 6.0          //=PID_FAN_SCALING_LIN_FACTOR*PID_FAN_SCALING_MIN_SPEED+DEFAULT_Kf
-      #define PID_FAN_SCALING_MIN_SPEED 10.0            // Minimum fan speed at which to enable PID_FAN_SCALING
+      #define PID_FAN_SCALING_MIN_SPEED 10.0            // Minimum fan speed at which to enable PID_FAN_SCALING |启用 PID_FAN_SCALING 的最低风扇速度
 
       #define DEFAULT_Kf (255.0*PID_FAN_SCALING_AT_MIN_SPEED-PID_FAN_SCALING_AT_FULL_SPEED*PID_FAN_SCALING_MIN_SPEED)/(255.0-PID_FAN_SCALING_MIN_SPEED)
       #define PID_FAN_SCALING_LIN_FACTOR (PID_FAN_SCALING_AT_FULL_SPEED-DEFAULT_Kf)/255.0
 
     #else
-      #define PID_FAN_SCALING_LIN_FACTOR (0)             // Power loss due to cooling = Kf * (fan_speed)
-      #define DEFAULT_Kf 10                              // A constant value added to the PID-tuner
-      #define PID_FAN_SCALING_MIN_SPEED 10               // Minimum fan speed at which to enable PID_FAN_SCALING
+      #define PID_FAN_SCALING_LIN_FACTOR (0)             // Power loss due to cooling = Kf * (fan_speed)  |冷却造成的功率损耗 = Kf *(fan_speed)
+      #define DEFAULT_Kf 10                              // A constant value added to the PID-tuner |添加到 PID 调节器的恒定值
+      #define PID_FAN_SCALING_MIN_SPEED 10               // Minimum fan speed at which to enable PID_FAN_SCALING  |启用 PID_FAN_SCALING 的最低风扇速度
     #endif
   #endif
 #endif
 
 /**
- * Automatic Temperature Mode
+ * Automatic Temperature Mode |自动温度模式
  *
- * Dynamically adjust the hotend target temperature based on planned E moves.
+ * Dynamically adjust the hotend target temperature based on planned E moves. |根据计划的 E 移动动态调整热端目标温度。
  *
- * (Contrast with PID_EXTRUSION_SCALING, which tracks E movement and adjusts PID
- *  behavior using an additional kC value.)
+ * (Contrast with PID_EXTRUSION_SCALING, which tracks E movement and adjusts PID  |（与PID_EXTRUSION_SCALING对比，它跟踪E的运动并调整PID
+ *  behavior using an additional kC value.) |使用附加 kC 值的行为。）
  *
- * Autotemp is calculated by (mintemp + factor * mm_per_sec), capped to maxtemp.
+ * Autotemp is calculated by (mintemp + factor * mm_per_sec), capped to maxtemp.  |Autotemp 的计算公式为 (mintemp + Factor mm_per_sec)，上限为 maxtemp。
  *
- * Enable Autotemp Mode with M104/M109 F<factor> S<mintemp> B<maxtemp>.
- * Disable by sending M104/M109 with no F parameter (or F0 with AUTOTEMP_PROPORTIONAL).
+ * Enable Autotemp Mode with M104/M109 F<factor> S<mintemp> B<maxtemp>. |使用 M104/M109 F<factor> S<mintemp> B<maxtemp> 启用自动温度模式。
+ * Disable by sending M104/M109 with no F parameter (or F0 with AUTOTEMP_PROPORTIONAL). |通过发送不带 F 参数的 M104/M109（或带 AUTOTEMP_PROPORTIONAL 的 F0）来禁用。
  */
 #define AUTOTEMP
 #if ENABLED(AUTOTEMP)
   #define AUTOTEMP_OLDWEIGHT    0.98
-  // Turn on AUTOTEMP on M104/M109 by default using proportions set here
+  // Turn on AUTOTEMP on M104/M109 by default using proportions set here  |默认情况下使用此处设置的比例在 M104/M109 上打开 AUTOTEMP
   //#define AUTOTEMP_PROPORTIONAL
   #if ENABLED(AUTOTEMP_PROPORTIONAL)
-    #define AUTOTEMP_MIN_P      0 // (°C) Added to the target temperature
+    #define AUTOTEMP_MIN_P      0 // (°C) Added to the target temperature   |(°C) 添加到目标温度
     #define AUTOTEMP_MAX_P      5 // (°C) Added to the target temperature
-    #define AUTOTEMP_FACTOR_P   1 // Apply this F parameter by default (overridden by M104/M109 F)
+    #define AUTOTEMP_FACTOR_P   1 // Apply this F parameter by default (overridden by M104/M109 F)  |默认应用此 F 参数（被 M104/M109 F 覆盖）
   #endif
 #endif
 
-// Show Temperature ADC value
-// Enable for M105 to include ADC values read from temperature sensors.
+// Show Temperature ADC value   |显示温度 ADC 值
+// Enable for M105 to include ADC values read from temperature sensors. |启用 M105 以包含从温度传感器读取的 ADC 值。
 //#define SHOW_TEMP_ADC_VALUES
 
 /**
- * High Temperature Thermistor Support
+ * High Temperature Thermistor Support  |高温热敏电阻支持
  *
- * Thermistors able to support high temperature tend to have a hard time getting
- * good readings at room and lower temperatures. This means HEATER_X_RAW_LO_TEMP
- * will probably be caught when the heating element first turns on during the
- * preheating process, which will trigger a min_temp_error as a safety measure
- * and force stop everything.
- * To circumvent this limitation, we allow for a preheat time (during which,
- * min_temp_error won't be triggered) and add a min_temp buffer to handle
- * aberrant readings.
+ * Thermistors able to support high temperature tend to have a hard time getting  |能够支持高温的热敏电阻往往很难获得
+ * good readings at room and lower temperatures. This means HEATER_X_RAW_LO_TEMP  |在室温和较低温度下读数良好。这意味着 HEATER_X_RAW_LO_TEMP
+ * will probably be caught when the heating element first turns on during the |在加热元件第一次打开时可能会被卡住
+ * preheating process, which will trigger a min_temp_error as a safety measure  |预热过程，这将触发 min_temp_error 作为安全措施
+ * and force stop everything. |并强制停止一切。
+ * To circumvent this limitation, we allow for a preheat time (during which,  |为了规避此限制，我们允许预热时间（在此期间，
+ * min_temp_error won't be triggered) and add a min_temp buffer to handle |min_temp_error不会被触发）并添加一个min_temp缓冲区来处理
+ * aberrant readings. |读数异常。
  *
- * If you want to enable this feature for your hotend thermistor(s)
- * uncomment and set values > 0 in the constants below
+ * If you want to enable this feature for your hotend thermistor(s) |如果您想为热端热敏电阻启用此功能
+ * uncomment and set values > 0 in the constants below  |在下面的常量中取消注释并设置值 > 0
  */
 
-// The number of consecutive low temperature errors that can occur
-// before a min_temp_error is triggered. (Shouldn't be more than 10.)
+// The number of consecutive low temperature errors that can occur  |可能发生连续低温错误的次数
+// before a min_temp_error is triggered. (Shouldn't be more than 10.) |在触发 min_temp_error 之前。 （不应超过 10 个。）
 //#define MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED 0
 
-// The number of milliseconds a hotend will preheat before starting to check
-// the temperature. This value should NOT be set to the time it takes the
-// hot end to reach the target temperature, but the time it takes to reach
-// the minimum temperature your thermistor can read. The lower the better/safer.
-// This shouldn't need to be more than 30 seconds (30000)
+// The number of milliseconds a hotend will preheat before starting to check  |开始检查之前热端预热的毫秒数
+// the temperature. This value should NOT be set to the time it takes the |温度。该值不应设置为它所花费的时间
+// hot end to reach the target temperature, but the time it takes to reach  |热端达到目标温度，但达到所需时间
+// the minimum temperature your thermistor can read. The lower the better/safer.  |热敏电阻可以读取的最低温度。越低越好/越安全。
+// This shouldn't need to be more than 30 seconds (30000) |这不应超过 30 秒 (30000)
 //#define MILLISECONDS_PREHEAT_TIME 0
 
 // @section extruder
 
-// Extruder runout prevention.
-// If the machine is idle and the temperature over MINTEMP
-// then extrude some filament every couple of SECONDS.
+// Extruder runout prevention.  |防止挤出机跳动。
+// If the machine is idle and the temperature over MINTEMP  |如果机器闲置并且温度超过MINTEMP
+// then extrude some filament every couple of SECONDS.  |然后每隔几秒挤出一些细丝。
 //#define EXTRUDER_RUNOUT_PREVENT
 #if ENABLED(EXTRUDER_RUNOUT_PREVENT)
   #define EXTRUDER_RUNOUT_MINTEMP 190
@@ -368,67 +368,67 @@
 #endif
 
 /**
- * Hotend Idle Timeout
- * Prevent filament in the nozzle from charring and causing a critical jam.
+ * Hotend Idle Timeout  |热端空闲超时
+ * Prevent filament in the nozzle from charring and causing a critical jam. |防止喷嘴中的灯丝烧焦并导致严重堵塞。
  */
 //#define HOTEND_IDLE_TIMEOUT
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
-  #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
-  #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
-  #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
-  #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
+  #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection |（秒）挤出机不移动触发保护的时间
+  #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection |(°C) 启用热端保护的最低温度
+  #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout |(°C) 超时后喷嘴的安全温度
+  #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout  |(°C) 超时后床的安全温度
 #endif
 
 // @section temperature
 
-// Calibration for AD595 / AD8495 sensor to adjust temperature measurements.
-// The final temperature is calculated as (measuredTemp * GAIN) + OFFSET.
+// Calibration for AD595 / AD8495 sensor to adjust temperature measurements.  |校准 AD595 /AD8495 传感器以调整温度测量。
+// The final temperature is calculated as (measuredTemp * GAIN) + OFFSET. |最终温度的计算公式为 (measuredTemp *GAIN) + OFFSET。
 #define TEMP_SENSOR_AD595_OFFSET  0.0
 #define TEMP_SENSOR_AD595_GAIN    1.0
 #define TEMP_SENSOR_AD8495_OFFSET 0.0
 #define TEMP_SENSOR_AD8495_GAIN   1.0
 
 /**
- * Controller Fan
- * To cool down the stepper drivers and MOSFETs.
+ * Controller Fan |控制器风扇
+ * To cool down the stepper drivers and MOSFETs.  |冷却步进驱动器和 MOSFET。
  *
- * The fan turns on automatically whenever any driver is enabled and turns
- * off (or reduces to idle speed) shortly after drivers are turned off.
+ * The fan turns on automatically whenever any driver is enabled and turns  |每当任何驱动程序启用并转动时，风扇都会自动打开
+ * off (or reduces to idle speed) shortly after drivers are turned off. |驱动器关闭后不久关闭（或降低至怠速）。
  */
 #define USE_CONTROLLER_FAN
 #if ENABLED(USE_CONTROLLER_FAN)
-  #define CONTROLLER_FAN_PIN PC6         // Set a custom pin for the controller fan
-  //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
-  //#define CONTROLLER_FAN_IGNORE_Z      // Ignore Z stepper. Useful when stepper timeout is disabled.
-  #define CONTROLLERFAN_SPEED_MIN      0 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
-  #define CONTROLLERFAN_SPEED_ACTIVE 255 // (0-255) Active speed, used when any motor is enabled
-  #define CONTROLLERFAN_SPEED_IDLE     0 // (0-255) Idle speed, used when motors are disabled
-  #define CONTROLLERFAN_IDLE_TIME     60 // (seconds) Extra time to keep the fan running after disabling motors
-  //#define CONTROLLER_FAN_EDITABLE      // Enable M710 configurable settings
+  #define CONTROLLER_FAN_PIN PC6         // Set a custom pin for the controller fan |为控制器风扇设置自定义引脚
+  //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered  |使用此选项仅考虑 Z 轴
+  //#define CONTROLLER_FAN_IGNORE_Z      // Ignore Z stepper. Useful when stepper timeout is disabled.  |忽略 Z 步进器。当禁用步进器超时时很有用。
+  #define CONTROLLERFAN_SPEED_MIN      0 // (0-255) Minimum speed. (If set below this value the fan is turned off.) |(0-255) 最小速度。 （如果设置低于此值，风扇将关闭。）
+  #define CONTROLLERFAN_SPEED_ACTIVE 255 // (0-255) Active speed, used when any motor is enabled  |(0-255) 有效速度，在启用任何电机时使用
+  #define CONTROLLERFAN_SPEED_IDLE     0 // (0-255) Idle speed, used when motors are disabled |(0-255) 怠速，电机禁用时使用
+  #define CONTROLLERFAN_IDLE_TIME     60 // (seconds) Extra time to keep the fan running after disabling motors |（秒）禁用电机后保持风扇运行的额外时间
+  //#define CONTROLLER_FAN_EDITABLE      // Enable M710 configurable settings |启用 M710 可配置设置
   #if ENABLED(CONTROLLER_FAN_EDITABLE)
-    #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu
+    #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu |启用控制器风扇子菜单
   #endif
 #endif
 
-// When first starting the main fan, run it at full speed for the
-// given number of milliseconds.  This gets the fan spinning reliably
-// before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
+// When first starting the main fan, run it at full speed for the |首次启动主风扇时，全速运行一段时间
+// given number of milliseconds.  This gets the fan spinning reliably |给定的毫秒数。  这使得风扇可靠地旋转
+// before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)  |在设置 PWM 值之前。 （不适用于 Sanguinololu 上风扇的软件 PWM）
 #define FAN_KICKSTART_TIME 100
 
-// Some coolers may require a non-zero "off" state.
+// Some coolers may require a non-zero "off" state. |一些冷却器可能需要非零“关闭”状态。
 //#define FAN_OFF_PWM  1
 
 /**
- * PWM Fan Scaling
+ * PWM Fan Scaling  |PWM 风扇调节
  *
- * Define the min/max speeds for PWM fans (as set with M106).
+ * Define the min/max speeds for PWM fans (as set with M106). |定义 PWM 风扇的最小/最大速度（通过 M106 设置）。
  *
- * With these options the M106 0-255 value range is scaled to a subset
- * to ensure that the fan has enough power to spin, or to run lower
- * current fans with higher current. (e.g., 5V/12V fans with 12V/24V)
- * Value 0 always turns off the fan.
+ * With these options the M106 0-255 value range is scaled to a subset  |使用这些选项，M106 0-255 值范围将缩放为一个子集
+ * to ensure that the fan has enough power to spin, or to run lower |确保风扇有足够的功率旋转，或以较低的速度运行
+ * current fans with higher current. (e.g., 5V/12V fans with 12V/24V) |当前风扇具有更高的电流。 （例如，5V/12V 风扇与 12V/24V）
+ * Value 0 always turns off the fan.  |值 0 始终关闭风扇。
  *
- * Define one or both of these to override the default 0-255 range.
+ * Define one or both of these to override the default 0-255 range. |定义其中一项或两项以覆盖默认的 0-255 范围。
  */
 #define FAN_MIN_PWM 50
 //#define FAN_MAX_PWM 128
